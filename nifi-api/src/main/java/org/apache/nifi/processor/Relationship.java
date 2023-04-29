@@ -79,7 +79,7 @@ public final class Relationship implements Comparable<Relationship> {
 
         private String name = "";
         private String description = "";
-        private boolean autoTerminate = false;
+        private boolean autoTerminate = true;
 
         public Builder name(final String name) {
             if (null != name) {

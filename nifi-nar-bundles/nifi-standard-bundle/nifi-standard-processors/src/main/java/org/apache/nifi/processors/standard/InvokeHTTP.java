@@ -597,26 +597,31 @@ public class InvokeHTTP extends AbstractProcessor {
     public static final Relationship ORIGINAL = new Relationship.Builder()
             .name("Original")
             .description("Request FlowFiles transferred when receiving HTTP responses with a status code between 200 and 299.")
+            .autoTerminateDefault(true)
             .build();
 
     public static final Relationship RESPONSE = new Relationship.Builder()
             .name("Response")
             .description("Response FlowFiles transferred when receiving HTTP responses with a status code between 200 and 299.")
+            .autoTerminateDefault(true)
             .build();
 
     public static final Relationship RETRY = new Relationship.Builder()
             .name("Retry")
             .description("Request FlowFiles transferred when receiving HTTP responses with a status code between 500 and 599.")
+            .autoTerminateDefault(true)
             .build();
 
     public static final Relationship NO_RETRY = new Relationship.Builder()
             .name("No Retry")
             .description("Request FlowFiles transferred when receiving HTTP responses with a status code between 400 an 499.")
+            .autoTerminateDefault(true)
             .build();
 
     public static final Relationship FAILURE = new Relationship.Builder()
             .name("Failure")
             .description("Request FlowFiles transferred when receiving socket communication errors.")
+            .autoTerminateDefault(true)
             .build();
 
     public static final Set<Relationship> RELATIONSHIPS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(

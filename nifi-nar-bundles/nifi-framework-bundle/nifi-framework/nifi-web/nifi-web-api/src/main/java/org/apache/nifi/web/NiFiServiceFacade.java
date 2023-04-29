@@ -2185,6 +2185,13 @@ public interface NiFiServiceFacade {
      */
     void verifyDeleteControllerService(String controllerServiceId);
 
+    /**
+     * Verifies controller service exist.
+     *
+     * @param controllerServiceId id
+     */
+    boolean hasControllerService(String controllerServiceId);
+
     // ----------------------------------------
     // Parameter Provider methods
     // ----------------------------------------

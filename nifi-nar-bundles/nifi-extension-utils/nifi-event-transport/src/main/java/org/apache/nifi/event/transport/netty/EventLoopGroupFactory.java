@@ -17,6 +17,7 @@
 package org.apache.nifi.event.transport.netty;
 
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
 
@@ -57,6 +58,9 @@ class EventLoopGroupFactory {
         return new NioEventLoopGroup(workerThreads, getThreadFactory());
     }
 
+    protected EventLoopGroup getEpollEventLoopGroup() {
+        return new EpollEventLoopGroup(workerThreads,getThreadFactory());
+    }
     private ThreadFactory getThreadFactory() {
         return new DefaultThreadFactory(threadNamePrefix, DAEMON_THREAD_ENABLED);
     }

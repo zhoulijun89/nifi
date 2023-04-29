@@ -273,11 +273,13 @@ public class PublishKafka_2_6 extends AbstractProcessor implements KafkaPublishC
     static final Relationship REL_SUCCESS = new Relationship.Builder()
         .name("success")
         .description("FlowFiles for which all content was sent to Kafka.")
+        .autoTerminateDefault(true)
         .build();
 
     static final Relationship REL_FAILURE = new Relationship.Builder()
         .name("failure")
         .description("Any FlowFile that cannot be sent to Kafka will be routed to this Relationship")
+        .autoTerminateDefault(true)
         .build();
 
     private static final List<PropertyDescriptor> PROPERTIES;

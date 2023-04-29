@@ -19,6 +19,7 @@ package org.apache.nifi.event.transport.netty;
 import io.netty.bootstrap.AbstractBootstrap;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
+import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -27,6 +28,9 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.FixedRecvByteBufAllocator;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollChannelOption;
+import io.netty.channel.epoll.EpollDatagramChannel;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import org.apache.nifi.event.transport.EventException;
@@ -43,6 +47,7 @@ import org.apache.nifi.security.util.ClientAuth;
 import javax.net.ssl.SSLContext;
 import java.net.InetAddress;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -176,6 +181,25 @@ public class NettyEventServerFactory extends EventLoopGroupFactory implements Ev
         return getBoundEventServer(bootstrap, group);
     }
 
+
+
+    public List<EventServer> getEventServerList(int nThreads) {
+        final EventLoopGroup group = getEpollEventLoopGroup();
+        final Bootstrap bootstrap =  new Bootstrap();
+        bootstrap.group(group);
+        bootstrap.channel(EpollDatagramChannel.class);
+        bootstrap.option(ChannelOption.SO_RCVBUF, socketReceiveBuffer);
+        bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
+        bootstrap.option(EpollChannelOption.SO_REUSEPORT, true);
+        bootstrap.option(ChannelOption.SO_BROADCAST, true);
+        bootstrap.handler(new StandardChannelInitializer<>(handlerSupplier));
+        List<EventServer> list = new ArrayList<>();
+        while ( nThreads-- > 0){
+            list.add(getBoundEventServerSync(bootstrap, group));
+        }
+        return list;
+    }
+
     private void setChannelOptions(final AbstractBootstrap<?, ?> bootstrap) {
         if (socketReceiveBuffer != null) {
             bootstrap.option(ChannelOption.SO_RCVBUF, socketReceiveBuffer);
@@ -214,10 +238,22 @@ public class NettyEventServerFactory extends EventLoopGroupFactory implements Ev
     }
 
     private EventServer getBoundEventServer(final AbstractBootstrap<?, ?> bootstrap, final EventLoopGroup group) {
-        final ChannelFuture bindFuture = bootstrap.bind(address, port);
+            final ChannelFuture bindFuture = bootstrap.bind(address, port);
         try {
             final ChannelFuture channelFuture = bindFuture.syncUninterruptibly();
             return new NettyEventServer(group, channelFuture.channel(), shutdownQuietPeriod, shutdownTimeout);
+        } catch (final Exception e) {
+            group.shutdownGracefully();
+            throw new EventException(String.format("Channel Bind Failed [%s:%d]", address, port), e);
+        }
+    }
+
+
+    private EventServer getBoundEventServerSync(final AbstractBootstrap<?, ?> bootstrap, final EventLoopGroup group) {
+//        final ChannelFuture bindFuture = bootstrap.bind(address, port);
+        try {
+                final ChannelFuture channelFuture = bootstrap.bind(port).sync();
+            return new NettyEventServer(group, channelFuture.channel());
         } catch (final Exception e) {
             group.shutdownGracefully();
             throw new EventException(String.format("Channel Bind Failed [%s:%d]", address, port), e);

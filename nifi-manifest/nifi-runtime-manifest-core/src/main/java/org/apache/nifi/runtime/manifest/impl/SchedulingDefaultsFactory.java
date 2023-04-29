@@ -40,7 +40,7 @@ public class SchedulingDefaultsFactory {
         schedulingDefaults.setPenalizationPeriodMillis(30000);
         schedulingDefaults.setYieldDurationMillis(1000);
         schedulingDefaults.setDefaultRunDurationNanos(0);
-        schedulingDefaults.setDefaultMaxConcurrentTasks("1");
+        schedulingDefaults.setDefaultMaxConcurrentTasks("3");
         schedulingDefaults.setDefaultConcurrentTasksBySchedulingStrategy(defaultConcurrentTasks);
         schedulingDefaults.setDefaultSchedulingPeriodsBySchedulingStrategy(defaultSchedulingPeriods);
         return schedulingDefaults;

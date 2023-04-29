@@ -245,6 +245,7 @@ public class ConsumeKafka_2_6 extends AbstractProcessor implements KafkaClientCo
     static final Relationship REL_SUCCESS = new Relationship.Builder()
         .name("success")
         .description("FlowFiles received from Kafka. Depending on demarcation strategy it is a flow file per message or a bundle of messages grouped by topic and partition.")
+        .autoTerminateDefault(true)
         .build();
 
     static final List<PropertyDescriptor> DESCRIPTORS;

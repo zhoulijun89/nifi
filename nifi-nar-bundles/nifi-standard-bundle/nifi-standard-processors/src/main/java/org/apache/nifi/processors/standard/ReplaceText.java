@@ -134,7 +134,7 @@ public class ReplaceText extends AbstractProcessor {
         .required(true)
         .addValidator(Validator.VALID)
         .expressionLanguageSupported(ExpressionLanguageScope.FLOWFILE_ATTRIBUTES)
-        .defaultValue(DEFAULT_REGEX)
+        //.defaultValue(DEFAULT_REGEX)
         .build();
     public static final PropertyDescriptor REPLACEMENT_VALUE = new PropertyDescriptor.Builder()
         .name("Replacement Value")
@@ -143,7 +143,7 @@ public class ReplaceText extends AbstractProcessor {
             + "Back References may also be referenced using the Expression Language, as '$1', '$2', etc. The single-tick marks MUST be included, as these variables are "
             + "not \"Standard\" attribute names (attribute names must be quoted unless they contain only numbers, letters, and _).")
         .required(true)
-        .defaultValue(DEFAULT_REPLACEMENT_VALUE)
+        //.defaultValue(DEFAULT_REPLACEMENT_VALUE)
         .addValidator(Validator.VALID)
         .expressionLanguageSupported(ExpressionLanguageScope.FLOWFILE_ATTRIBUTES)
         .build();
@@ -196,10 +196,12 @@ public class ReplaceText extends AbstractProcessor {
         .name("success")
         .description("FlowFiles that have been successfully processed are routed to this relationship. This includes both FlowFiles that had text"
             + " replaced and those that did not.")
+        .autoTerminateDefault(true)
         .build();
     public static final Relationship REL_FAILURE = new Relationship.Builder()
         .name("failure")
         .description("FlowFiles that could not be updated are routed to this relationship")
+        .autoTerminateDefault(true)
         .build();
 
     private List<PropertyDescriptor> properties;

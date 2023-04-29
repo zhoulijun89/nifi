@@ -48,12 +48,14 @@ public class ScriptingComponentUtils {
     public static final Relationship REL_SUCCESS = new Relationship.Builder()
             .name("success")
             .description("FlowFiles that were successfully processed")
+            .autoTerminateDefault(true)
             .build();
 
     /** A relationship indicating an error while processing flow files */
     public static final Relationship REL_FAILURE = new Relationship.Builder()
             .name("failure")
             .description("FlowFiles that failed to be processed")
+            .autoTerminateDefault(true)
             .build();
 
     /** A property descriptor for specifying the location of a script file */

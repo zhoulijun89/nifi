@@ -689,6 +689,10 @@ public class StandardNiFiServiceFacade implements NiFiServiceFacade {
         controllerServiceDAO.verifyDelete(controllerServiceId);
     }
 
+    public boolean hasControllerService(final String controllerServiceId){
+      return controllerServiceDAO.hasControllerService(controllerServiceId);
+    }
+
     @Override
     public void verifyCreateReportingTask(ReportingTaskDTO reportingTaskDTO) {
         reportingTaskDAO.verifyCreate(reportingTaskDTO);
@@ -3562,12 +3566,20 @@ public class StandardNiFiServiceFacade implements NiFiServiceFacade {
 
     @Override
     public DownloadableContent getContent(final String connectionId, final String flowFileUuid, final String uri) {
-        return connectionDAO.getContent(connectionId, flowFileUuid, uri);
+        try {
+            return connectionDAO.getContent(connectionId, flowFileUuid, uri);
+        } catch (Exception e){
+            return null;
+        }
     }
 
     @Override
     public DownloadableContent getContent(final Long eventId, final String uri, final ContentDirection contentDirection) {
-        return controllerFacade.getContent(eventId, uri, contentDirection);
+        try {
+            return controllerFacade.getContent(eventId, uri, contentDirection);
+        } catch (Exception e){
+            return null;
+        }
     }
 
     @Override

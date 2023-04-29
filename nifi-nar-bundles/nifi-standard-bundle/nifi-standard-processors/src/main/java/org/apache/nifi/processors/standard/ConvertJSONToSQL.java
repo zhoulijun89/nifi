@@ -231,15 +231,18 @@ public class ConvertJSONToSQL extends AbstractProcessor {
     static final Relationship REL_ORIGINAL = new Relationship.Builder()
             .name("original")
             .description("When a FlowFile is converted to SQL, the original JSON FlowFile is routed to this relationship")
+            .autoTerminateDefault(true)
             .build();
     static final Relationship REL_SQL = new Relationship.Builder()
             .name("sql")
             .description("A FlowFile is routed to this relationship when its contents have successfully been converted into a SQL statement")
+            .autoTerminateDefault(true)
             .build();
     static final Relationship REL_FAILURE = new Relationship.Builder()
             .name("failure")
             .description("A FlowFile is routed to this relationship if it cannot be converted into a SQL statement. Common causes include invalid JSON "
                     + "content or the JSON content missing a required field (if using an INSERT statement type).")
+            .autoTerminateDefault(true)
             .build();
 
     private Cache<SchemaKey, TableSchema> schemaCache;

@@ -149,10 +149,12 @@ public class JoltTransformJSON extends AbstractProcessor {
     public static final Relationship REL_SUCCESS = new Relationship.Builder()
             .name("success")
             .description("The FlowFile with transformed content will be routed to this relationship")
+            .autoTerminateDefault(true)
             .build();
     public static final Relationship REL_FAILURE = new Relationship.Builder()
             .name("failure")
             .description("If a FlowFile fails processing for any reason (for example, the FlowFile is not valid JSON), it will be routed to this relationship")
+            .autoTerminateDefault(true)
             .build();
 
     private final static List<PropertyDescriptor> properties;

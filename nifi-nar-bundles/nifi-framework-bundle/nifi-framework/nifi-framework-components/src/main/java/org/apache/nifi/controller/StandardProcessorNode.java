@@ -1159,7 +1159,7 @@ public class StandardProcessorNode extends ProcessorNode implements Connectable 
                         final int incomingConnCount = getIncomingNonLoopConnections().size();
                         if (incomingConnCount != 0) {
                             results.add(new ValidationResult.Builder().explanation(
-                                "Processor does not allow upstream connections but currently has " + incomingConnCount)
+                                "Processor does not allow upstream connections but currently has " + incomingConnCount+"[组件不允许有输入链接]")
                                 .subject("Upstream Connections").valid(false).build());
                         }
                         break;
@@ -1167,7 +1167,7 @@ public class StandardProcessorNode extends ProcessorNode implements Connectable 
                     case INPUT_REQUIRED: {
                         if (getIncomingNonLoopConnections().isEmpty()) {
                             results.add(new ValidationResult.Builder()
-                                .explanation("Processor requires an upstream connection but currently has none")
+                                .explanation("Processor requires an upstream connection but currently has none,[组件必须有输入链接]")
                                 .subject("Upstream Connections").valid(false).build());
                         }
                         break;
@@ -1409,7 +1409,7 @@ public class StandardProcessorNode extends ProcessorNode implements Connectable 
     public void verifyCanStart(final Set<ControllerServiceNode> ignoredReferences) {
         final ScheduledState currentState = getPhysicalScheduledState();
         if (currentState != ScheduledState.STOPPED && currentState != ScheduledState.DISABLED) {
-            throw new IllegalStateException(this + " cannot be started because it is not stopped. Current state is " + currentState.name());
+            throw new IllegalStateException(this + " cannot be started because it is not stopped. Current state is " + currentState.name()+"[组件不能启动因为当前状态不是停止，当前状态为 " + currentState.name()+ "]");
         }
 
         verifyNoActiveThreads();

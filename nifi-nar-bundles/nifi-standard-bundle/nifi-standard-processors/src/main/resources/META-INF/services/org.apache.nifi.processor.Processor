@@ -125,8 +125,13 @@ org.apache.nifi.processors.standard.UnpackContent
 org.apache.nifi.processors.standard.UpdateCounter
 org.apache.nifi.processors.standard.UpdateDatabaseTable
 org.apache.nifi.processors.standard.UpdateRecord
+org.apache.nifi.processors.standard.UpdateRecordJsonExtract
+org.apache.nifi.processors.standard.UpdateRecordTimeFormat
+org.apache.nifi.processors.standard.UpdateRecordTypeTransform
 org.apache.nifi.processors.standard.ValidateCsv
 org.apache.nifi.processors.standard.ValidateJson
 org.apache.nifi.processors.standard.ValidateRecord
 org.apache.nifi.processors.standard.ValidateXml
 org.apache.nifi.processors.standard.Wait
+org.apache.nifi.processors.standard.FilterText
+org.apache.nifi.processors.standard.LookupRecordSQL

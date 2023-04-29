@@ -150,11 +150,13 @@ public class ExtractGrok extends AbstractProcessor {
     public static final Relationship REL_MATCH = new Relationship.Builder()
             .name("matched")
             .description("FlowFiles are routed to this relationship when the Grok Expression is successfully evaluated and the FlowFile is modified as a result")
+            .autoTerminateDefault(true)
             .build();
 
     public static final Relationship REL_NO_MATCH = new Relationship.Builder()
             .name("unmatched")
             .description("FlowFiles are routed to this relationship when no provided Grok Expression matches the content of the FlowFile")
+            .autoTerminateDefault(true)
             .build();
 
     private final static List<PropertyDescriptor> descriptors;

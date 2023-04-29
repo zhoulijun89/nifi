@@ -4060,7 +4060,7 @@ public class ProcessGroupResource extends FlowUpdateResource<ProcessGroupImportE
         } else if (isDisconnectedFromCluster()) {
             verifyDisconnectedNodeModification(requestControllerServiceEntity.isDisconnectedNodeAcknowledged());
         }
-
+        logger.warn("controllerServiceId is : [{}]",requestControllerServiceEntity.getId());
         return withWriteLock(
                 serviceFacade,
                 requestControllerServiceEntity,
@@ -4096,9 +4096,14 @@ public class ProcessGroupResource extends FlowUpdateResource<ProcessGroupImportE
                 () -> serviceFacade.verifyCreateControllerService(requestControllerService),
                 controllerServiceEntity -> {
                     final ControllerServiceDTO controllerService = controllerServiceEntity.getComponent();
+                    // controllerService exist return it
+                    if (StringUtils.isNotBlank(requestControllerServiceEntity.getId()) && serviceFacade.hasControllerService(requestControllerServiceEntity.getId())) {
+                        final ControllerServiceEntity entity = serviceFacade.getControllerService(requestControllerServiceEntity.getId());
+                        return generateOkResponse(entity).build();
+                    }
 
                     // set the processor id as appropriate
-                    controllerService.setId(generateUuid());
+                    controllerService.setId(StringUtils.isBlank(requestControllerServiceEntity.getId())?generateUuid():requestControllerServiceEntity.getId());
 
                     // create the controller service and generate the json
                     final Revision revision = getRevision(controllerServiceEntity, controllerService.getId());

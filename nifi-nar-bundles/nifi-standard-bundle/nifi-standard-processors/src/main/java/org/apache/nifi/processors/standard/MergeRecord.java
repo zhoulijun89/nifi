@@ -207,6 +207,7 @@ public class MergeRecord extends AbstractSessionFactoryProcessor {
         .displayName("Max Bin Age")
         .description("The maximum age of a Bin that will trigger a Bin to be complete. Expected format is <duration> <time unit> "
             + "where <duration> is a positive integer and time unit is one of seconds, minutes, hours")
+        .defaultValue("10s")
         .required(false)
         .addValidator(StandardValidators.TIME_PERIOD_VALIDATOR)
         .build();
@@ -215,14 +216,17 @@ public class MergeRecord extends AbstractSessionFactoryProcessor {
 
     public static final Relationship REL_MERGED = new Relationship.Builder()
         .name("merged")
+        .autoTerminateDefault(true)
         .description("The FlowFile containing the merged records")
         .build();
     public static final Relationship REL_ORIGINAL = new Relationship.Builder()
         .name("original")
+        .autoTerminateDefault(true)
         .description("The FlowFiles that were used to create the bundle")
         .build();
     public static final Relationship REL_FAILURE = new Relationship.Builder()
         .name("failure")
+        .autoTerminateDefault(true)
         .description("If the bundle cannot be created, all FlowFiles that would have been used to created the bundle will be transferred to failure")
         .build();
 

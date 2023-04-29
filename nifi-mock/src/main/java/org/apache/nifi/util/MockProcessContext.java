@@ -381,7 +381,7 @@ public class MockProcessContext extends MockControllerServiceLookup implements P
                 validationResults.add(new ValidationResult.Builder()
                     .input(controllerServiceId)
                     .subject(descriptor.getDisplayName())
-                    .explanation("Controller Service with ID " + controllerServiceId + " is not enabled")
+                    .explanation("Controller Service with ID " + controllerServiceId + " is not enabled [服务" + controllerServiceId + "未启用]")
                     .valid(false)
                     .build());
             }

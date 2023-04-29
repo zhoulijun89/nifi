@@ -40,6 +40,6 @@ public @interface DefaultSchedule {
 
     SchedulingStrategy strategy() default  SchedulingStrategy.TIMER_DRIVEN;
     String period() default "0 sec";
-    int concurrentTasks() default 1;
+    int concurrentTasks() default 3;
 
 }

@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import io.swagger.annotations.Authorization;
+import org.apache.http.HttpResponse;
 import org.apache.nifi.authorization.AccessDeniedException;
 import org.apache.nifi.authorization.Authorizer;
 import org.apache.nifi.authorization.RequestAction;
@@ -63,6 +64,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.Collections;
+import java.util.Date;
 
 /**
  * RESTful endpoint for querying data provenance.
@@ -138,6 +140,9 @@ public class ProvenanceEventResource extends ApplicationResource {
 
         // get an input stream to the content
         final DownloadableContent content = serviceFacade.getContent(id.getLong(), uri, ContentDirection.INPUT);
+        if (content == null) {
+            return generateOkResponse("").build();
+        }
 
         // generate a streaming response
         final StreamingOutput response = new StreamingOutput() {
@@ -222,6 +227,11 @@ public class ProvenanceEventResource extends ApplicationResource {
 
         // get an input stream to the content
         final DownloadableContent content = serviceFacade.getContent(id.getLong(), uri, ContentDirection.OUTPUT);
+        if (content == null) {
+            return generateOkResponse("").build();
+        }
+        //final DownloadableContent content = serviceFacade.getContent(id.getLong(), uri, ContentDirection.OUTPUT);
+
 
         // generate a streaming response
         final StreamingOutput response = new StreamingOutput() {

@@ -16,6 +16,7 @@
  */
 package org.apache.nifi.processors.standard;
 
+import io.netty.channel.epoll.Epoll;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.nifi.annotation.behavior.InputRequirement;
 import org.apache.nifi.annotation.behavior.SupportsBatching;
@@ -136,7 +137,7 @@ public class ListenSyslog extends AbstractSyslogProcessor {
         .displayName("Max Number of TCP Connections")
         .description("The maximum number of concurrent connections to accept Syslog messages in TCP mode.")
         .addValidator(StandardValidators.createLongValidator(1, 65535, true))
-        .defaultValue("2")
+        .defaultValue("0")
         .required(true)
         .dependsOn(PROTOCOL, TCP_VALUE)
         .build();
@@ -199,10 +200,12 @@ public class ListenSyslog extends AbstractSyslogProcessor {
     public static final Relationship REL_SUCCESS = new Relationship.Builder()
         .name("success")
         .description("Syslog messages that match one of the expected formats will be sent out this relationship as a FlowFile per message.")
+        .autoTerminateDefault(true)
         .build();
     public static final Relationship REL_INVALID = new Relationship.Builder()
         .name("invalid")
         .description("Syslog messages that do not match one of the expected formats will be sent out this relationship as a FlowFile per message.")
+        .autoTerminateDefault(true)
         .build();
 
     protected static final String RECEIVED_COUNTER = "Messages Received";
@@ -213,6 +216,8 @@ public class ListenSyslog extends AbstractSyslogProcessor {
     private List<PropertyDescriptor> descriptors;
 
     private volatile EventServer eventServer;
+
+    private volatile List<EventServer> eventServerList;
     private volatile SyslogParser parser;
     private volatile BlockingQueue<ByteArrayMessage> syslogEvents = new LinkedBlockingQueue<>();
     private volatile byte[] messageDemarcatorBytes; //it is only the array reference that is volatile - not the contents.
@@ -293,6 +298,7 @@ public class ListenSyslog extends AbstractSyslogProcessor {
         factory.setShutdownQuietPeriod(ShutdownQuietPeriod.QUICK.getDuration());
         factory.setThreadNamePrefix(String.format("%s[%s]", ListenSyslog.class.getSimpleName(), getIdentifier()));
         final int maxConnections = context.getProperty(MAX_CONNECTIONS).asLong().intValue();
+        getLogger().info("factory WorkerThreads:[{}]", maxConnections);
         factory.setWorkerThreads(maxConnections);
         factory.setSocketReceiveBuffer(maxSocketBufferSize);
 
@@ -310,13 +316,23 @@ public class ListenSyslog extends AbstractSyslogProcessor {
             factory.setSslContext(sslContext);
             factory.setClientAuth(clientAuth);
         }
-        eventServer = factory.getEventServer();
+//        if (Epoll.isAvailable()){
+//            int  nThreads = Runtime.getRuntime().availableProcessors();
+//            factory.setWorkerThreads(nThreads);
+//            eventServerList=factory.getEventServerList(nThreads);
+//            getLogger().info("开启多线程监听 WorkerThreads:[{}]", eventServerList.size());
+//        }else {
+            eventServer = factory.getEventServer();
+//        }
     }
 
     @OnStopped
     public void shutdownEventServer() {
         if (eventServer != null) {
             eventServer.shutdown();
+        }
+        if (eventServerList!=null && !eventServerList.isEmpty()){
+            eventServerList.forEach(EventServer::shutdown);
         }
     }
 
