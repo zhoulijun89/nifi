@@ -316,14 +316,14 @@ public class ListenSyslog extends AbstractSyslogProcessor {
             factory.setSslContext(sslContext);
             factory.setClientAuth(clientAuth);
         }
-//        if (Epoll.isAvailable()){
-//            int  nThreads = Runtime.getRuntime().availableProcessors();
-//            factory.setWorkerThreads(nThreads);
-//            eventServerList=factory.getEventServerList(nThreads);
-//            getLogger().info("开启多线程监听 WorkerThreads:[{}]", eventServerList.size());
-//        }else {
+        if (UDP_VALUE.getValue().equals(protocol) && Epoll.isAvailable()){
+            int  nThreads = Runtime.getRuntime().availableProcessors();
+            factory.setWorkerThreads(nThreads);
+            eventServerList=factory.getEventServerList(nThreads);
+            getLogger().info("开启多线程监听 WorkerThreads:[{}]", eventServerList.size());
+        }else {
             eventServer = factory.getEventServer();
-//        }
+        }
     }
 
     @OnStopped

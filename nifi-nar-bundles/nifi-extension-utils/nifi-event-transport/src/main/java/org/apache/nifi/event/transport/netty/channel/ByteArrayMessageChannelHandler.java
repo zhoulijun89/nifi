@@ -52,7 +52,7 @@ public class ByteArrayMessageChannelHandler extends SimpleChannelInboundHandler<
     @Override
     protected void channelRead0(final ChannelHandlerContext channelHandlerContext, final ByteArrayMessage message) {
         LOGGER.debug("Message Received Length [{}] Remote Address [{}] ", message.getMessage().length, message.getSender());
-
+//        LOGGER.error("Thead:[{}] 收到syslog",Thread.currentThread().getName());
         final EventExecutor executor = channelHandlerContext.executor();
         while (!offer(message)) {
             if (executor.isShuttingDown()) {
