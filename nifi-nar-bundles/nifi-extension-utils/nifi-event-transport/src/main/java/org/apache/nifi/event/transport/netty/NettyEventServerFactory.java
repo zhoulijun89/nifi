@@ -188,7 +188,8 @@ public class NettyEventServerFactory extends EventLoopGroupFactory implements Ev
         final Bootstrap bootstrap =  new Bootstrap();
         bootstrap.group(group);
         bootstrap.channel(EpollDatagramChannel.class);
-        bootstrap.option(ChannelOption.SO_RCVBUF, socketReceiveBuffer);
+        //receiver socket buffer size 20MB
+        bootstrap.option(ChannelOption.SO_RCVBUF, 20*1024*1024);
         bootstrap.option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT);
         bootstrap.option(EpollChannelOption.SO_REUSEPORT, true);
         bootstrap.option(ChannelOption.SO_BROADCAST, true);
