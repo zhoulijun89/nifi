@@ -317,7 +317,7 @@ public class ListenSyslog extends AbstractSyslogProcessor {
             factory.setClientAuth(clientAuth);
         }
         if (UDP_VALUE.getValue().equals(protocol) && Epoll.isAvailable()){
-            int  nThreads = Math.min(maxConnections,Runtime.getRuntime().availableProcessors());
+            int  nThreads = Math.min(4,Runtime.getRuntime().availableProcessors());
             factory.setWorkerThreads(nThreads);
             eventServerList=factory.getEventServerList(nThreads);
             getLogger().info("开启多线程监听 WorkerThreads:[{}]", eventServerList.size());
